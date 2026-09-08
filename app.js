@@ -20,6 +20,8 @@ let mediaRecorder = null;
 let recordedChunks = [];
 let audioCtx = null;
 let mediaStreamDest = null;
+let mediaElementSource = null;
+let searchStations = [];
 
 // ---------- Storage helpers ----------
 const store = {
@@ -126,6 +128,12 @@ function renderHistory() {
   attachStationHandlers(ul, hist);
 }
 
+function renderSearchResults() {
+  const results = document.getElementById("searchResults");
+  results.innerHTML = searchStations.map(s => stationItemHTML(s)).join("");
+  attachStationHandlers(results, searchStations);
+}
+
 function renderRecordings() {
   const recs = getRecordings();
   const ul = document.getElementById("recordingsList");
@@ -169,6 +177,7 @@ function toggleFavorite(station) {
   setFavorites(favs);
   renderDefaultStations();
   renderFavorites();
+  renderSearchResults();
   updateFavButton();
 }
 
@@ -281,8 +290,8 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
         return;
       }
       status.textContent = `${stations.length} résultat(s)`;
-      results.innerHTML = stations.map(s => stationItemHTML(s)).join("");
-      attachStationHandlers(results, stations);
+      searchStations = stations;
+      renderSearchResults();
       return;
     } catch {
       continue; // try next mirror
@@ -327,14 +336,20 @@ document.getElementById("btnRecord").addEventListener("click", () => {
 
 function startRecording() {
   try {
+    if (!window.MediaRecorder) throw new Error("MediaRecorder unavailable");
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioCtx.createMediaElementSource(player);
-    mediaStreamDest = audioCtx.createMediaStreamDestination();
-    source.connect(mediaStreamDest);
-    source.connect(audioCtx.destination); // keep audible
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    if (!mediaElementSource) {
+      mediaElementSource = audioCtx.createMediaElementSource(player);
+      mediaStreamDest = audioCtx.createMediaStreamDestination();
+      mediaElementSource.connect(mediaStreamDest);
+      mediaElementSource.connect(audioCtx.destination);
+    }
 
     recordedChunks = [];
-    mediaRecorder = new MediaRecorder(mediaStreamDest.stream);
+    const mimeType = ["audio/webm;codecs=opus", "audio/webm", "audio/ogg;codecs=opus"]
+      .find(type => MediaRecorder.isTypeSupported(type));
+    mediaRecorder = new MediaRecorder(mediaStreamDest.stream, mimeType ? { mimeType } : undefined);
     mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
     mediaRecorder.onstop = saveRecording;
     mediaRecorder.start();
@@ -342,7 +357,8 @@ function startRecording() {
     document.getElementById("btnRecord").classList.add("recording");
     showToast("Enregistrement démarré");
   } catch (err) {
-    showToast("Enregistrement non pris en charge sur ce flux/navigateur");
+    console.error("Recording failed", err);
+    showToast("Ce flux ou ce navigateur ne permet pas l'enregistrement");
   }
 }
 
@@ -352,11 +368,20 @@ function stopRecording() {
 }
 
 function saveRecording() {
-  const blob = new Blob(recordedChunks, { type: "audio/webm" });
+  if (!recordedChunks.length) {
+    showToast("Aucune donnée audio à enregistrer");
+    return;
+  }
+  const blob = new Blob(recordedChunks, { type: mediaRecorder?.mimeType || "audio/webm" });
   const id = "rec_" + Date.now();
   recordingBlobs[id] = URL.createObjectURL(blob);
   const meta = getRecordings();
-  meta.unshift({ id, name: currentStation ? currentStation.name : "Enregistrement", date: Date.now() });
+  meta.unshift({
+    id,
+    name: currentStation ? currentStation.name : "Enregistrement",
+    date: Date.now(),
+    type: blob.type
+  });
   store.set("wr_recordings_meta", meta.slice(0, 20));
   showToast("Enregistrement prêt à télécharger");
   renderRecordings();
@@ -368,7 +393,8 @@ function downloadRecording(id) {
   const meta = getRecordings().find(r => r.id === id);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(meta?.name || "enregistrement").replace(/[^a-z0-9]/gi, "_")}.webm`;
+  const extension = meta?.type?.includes("ogg") ? "ogg" : "webm";
+  a.download = `${(meta?.name || "enregistrement").replace(/[^a-z0-9]/gi, "_")}.${extension}`;
   a.click();
 }
 
