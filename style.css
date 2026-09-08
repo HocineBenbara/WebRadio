@@ -260,11 +260,16 @@ input[type="range"] {
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 1.1rem;
   cursor: pointer;
   padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
 }
 .station-fav.active { color: var(--live); }
+
+.heart-icon { display: block; }
 
 .empty-state {
   color: var(--text-muted);

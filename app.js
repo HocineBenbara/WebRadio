@@ -74,6 +74,16 @@ document.getElementById("tabs").addEventListener("click", (e) => {
 });
 
 // ---------- Rendering station lists ----------
+function heartIcon(active) {
+  return `
+    <svg viewBox="0 0 24 24" width="18" height="18" class="heart-icon" aria-hidden="true">
+      <path d="M12 21s-7.2-4.5-9.8-8.8C.5 8.6 2.6 4.9 6.4 4.9c2 0 3.8 1.1 5.6 3.2 1.8-2.1 3.6-3.2 5.6-3.2 3.8 0 5.9 3.7 4.2 7.3C19.2 16.5 12 21 12 21z"
+        fill="${active ? "var(--live)" : "none"}"
+        stroke="${active ? "var(--live)" : "currentColor"}"
+        stroke-width="1.7" stroke-linejoin="round"/>
+    </svg>`;
+}
+
 function stationItemHTML(station, opts = {}) {
   const fav = isFavorite(station);
   return `
@@ -82,7 +92,7 @@ function stationItemHTML(station, opts = {}) {
         <div class="station-title">${escapeHTML(station.name)}</div>
         <div class="station-sub">${escapeHTML(station.tags || station.url)}</div>
       </div>
-      <button class="station-fav ${fav ? "active" : ""}" data-action="fav" aria-label="Favori">${fav ? "♥" : "♡"}</button>
+      <button class="station-fav ${fav ? "active" : ""}" data-action="fav" aria-label="Favori">${heartIcon(fav)}</button>
     </li>
   `;
 }
@@ -185,9 +195,9 @@ function pushHistory(station) {
 
 function updateFavButton() {
   const btn = document.getElementById("btnFav");
-  if (!currentStation) { btn.textContent = "♡"; btn.classList.remove("active"); return; }
+  if (!currentStation) { btn.innerHTML = heartIcon(false); btn.classList.remove("active"); return; }
   const fav = isFavorite(currentStation);
-  btn.textContent = fav ? "♥" : "♡";
+  btn.innerHTML = heartIcon(fav);
   btn.classList.toggle("active", fav);
 }
 
@@ -367,6 +377,7 @@ renderDefaultStations();
 renderFavorites();
 renderHistory();
 renderRecordings();
+updateFavButton();
 
 // ---------- Service worker ----------
 if ("serviceWorker" in navigator) {
