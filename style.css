@@ -162,17 +162,17 @@ input[type="range"] {
 
 .tabs {
   display: flex;
-  overflow-x: auto;
+  flex-wrap: wrap;
   gap: 4px;
   padding: 10px 16px;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
   scrollbar-width: none;
 }
-.tabs::-webkit-scrollbar { display: none; }
 
 .tab {
-  flex: none;
+  flex: 1 1 auto;
+  white-space: nowrap;
   padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid var(--line);
