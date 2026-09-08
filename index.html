@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WebRadio</title>
+<meta name="description" content="Écoutez, recherchez et enregistrez des radios du monde entier.">
+<meta name="theme-color" content="#14110F">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Cadran / lecteur -->
+  <header class="dial" id="dial">
+    <div class="dial-ring">
+      <div class="dial-glow" id="dialGlow"></div>
+    </div>
+    <div class="dial-readout">
+      <p class="dial-label">EN LECTURE</p>
+      <h1 class="dial-station" id="stationName">Aucune station</h1>
+      <p class="dial-meta" id="stationMeta">Choisissez une station pour commencer</p>
+    </div>
+    <div class="transport">
+      <button class="btn-icon" id="btnFav" title="Ajouter aux favoris" aria-label="Ajouter aux favoris">♡</button>
+      <button class="btn-play" id="btnPlay" aria-label="Lecture / Pause">
+        <svg id="iconPlay" viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        <svg id="iconPause" viewBox="0 0 24 24" width="28" height="28" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg>
+      </button>
+      <button class="btn-icon" id="btnRecord" title="Enregistrer" aria-label="Enregistrer le flux">●</button>
+    </div>
+    <div class="volume-row">
+      <span class="volume-icon">🔉</span>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.9">
+    </div>
+  </header>
+
+  <!-- Onglets -->
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="stations">Stations</button>
+    <button class="tab" data-tab="search">Recherche</button>
+    <button class="tab" data-tab="favorites">Favoris</button>
+    <button class="tab" data-tab="history">Historique</button>
+    <button class="tab" data-tab="recordings">Enregistrements</button>
+  </nav>
+
+  <main class="panels">
+
+    <!-- Stations par défaut -->
+    <section class="panel active" id="panel-stations">
+      <div class="panel-head">
+        <h2>Stations suggérées</h2>
+        <button class="btn-link" id="btnAddStation">+ Ajouter une station</button>
+      </div>
+      <ul class="station-list" id="defaultStations"></ul>
+    </section>
+
+    <!-- Recherche -->
+    <section class="panel" id="panel-search">
+      <div class="panel-head">
+        <h2>Rechercher une radio</h2>
+      </div>
+      <form id="searchForm" class="search-form">
+        <input type="search" id="searchInput" placeholder="Nom, pays, genre… (ex. jazz, France, rock)" autocomplete="off">
+        <button type="submit" class="btn-primary">Chercher</button>
+      </form>
+      <p class="hint" id="searchStatus">Recherche via l'annuaire public Radio-Browser.</p>
+      <ul class="station-list" id="searchResults"></ul>
+    </section>
+
+    <!-- Favoris -->
+    <section class="panel" id="panel-favorites">
+      <div class="panel-head">
+        <h2>Favoris</h2>
+      </div>
+      <ul class="station-list" id="favoritesList"></ul>
+      <p class="empty-state" id="favoritesEmpty">Aucun favori pour l'instant. Touchez ♡ sur une station pour l'ajouter ici.</p>
+    </section>
+
+    <!-- Historique -->
+    <section class="panel" id="panel-history">
+      <div class="panel-head">
+        <h2>Historique</h2>
+        <button class="btn-link" id="btnClearHistory">Effacer</button>
+      </div>
+      <ul class="station-list" id="historyList"></ul>
+      <p class="empty-state" id="historyEmpty">Les stations écoutées récemment apparaîtront ici.</p>
+    </section>
+
+    <!-- Enregistrements -->
+    <section class="panel" id="panel-recordings">
+      <div class="panel-head">
+        <h2>Enregistrements</h2>
+      </div>
+      <p class="hint">L'enregistrement capture le flux en cours de lecture jusqu'à ce que vous l'arrêtiez. Le fichier est ensuite téléchargeable.</p>
+      <ul class="station-list" id="recordingsList"></ul>
+      <p class="empty-state" id="recordingsEmpty">Aucun enregistrement pour l'instant.</p>
+    </section>
+
+  </main>
+</div>
+
+<!-- Modale : ajouter une station -->
+<dialog id="addStationDialog">
+  <form id="addStationForm" class="add-form">
+    <h2>Ajouter une station</h2>
+    <label>Nom
+      <input type="text" id="addName" required placeholder="Ma radio">
+    </label>
+    <label>URL du flux
+      <input type="url" id="addUrl" required placeholder="https://exemple.com/stream.mp3">
+    </label>
+    <div class="add-form-actions">
+      <button type="button" class="btn-secondary" id="addCancel">Annuler</button>
+      <button type="submit" class="btn-primary">Ajouter</button>
+    </div>
+  </form>
+</dialog>
+
+<audio id="player" preload="none" crossorigin="anonymous"></audio>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
