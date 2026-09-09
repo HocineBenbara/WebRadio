@@ -179,28 +179,17 @@ input[type="range"] {
 /* ---------- Tabs ---------- */
 
 .tabs-outer {
-  position: relative;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
-}
-.tabs-outer::after {
-  content: "";
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: 28px;
-  background: linear-gradient(to right, transparent, var(--bg) 75%);
-  pointer-events: none;
 }
 
 .tabs {
   display: flex;
-  overflow-x: auto;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 10px 16px;
   background: var(--bg);
-  scrollbar-width: none;
 }
-.tabs::-webkit-scrollbar { display: none; }
 
 .tab {
   flex: none;

@@ -1,4 +1,4 @@
-const CACHE_NAME = "webradio-shell-v1";
+const CACHE_NAME = "webradio-shell-v2";
 const SHELL_FILES = [
   "./",
   "./index.html",
@@ -36,19 +36,18 @@ self.addEventListener("fetch", (event) => {
     return; // let the browser handle it normally
   }
 
-  // App shell: cache-first, falling back to network.
+  // App shell: network-first, so a new deploy is picked up immediately
+  // whenever the user is online. Cache is only a fallback for offline use.
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).then((response) => {
-          if (response.ok && event.request.method === "GET") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        }).catch(() => cached)
-      );
-    })
+    fetch(event.request)
+      .then((response) => {
+        if (response.ok && event.request.method === "GET") {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
+
