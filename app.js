@@ -50,6 +50,27 @@ function isFavorite(station) {
   return getFavorites().some(s => stationKey(s) === stationKey(station));
 }
 
+// ---------- Confirm dialog ----------
+const confirmDialog = document.getElementById("confirmDialog");
+function askConfirm(message) {
+  return new Promise((resolve) => {
+    document.getElementById("confirmMessage").textContent = message;
+    confirmDialog.showModal();
+    const okBtn = document.getElementById("confirmOk");
+    const cancelBtn = document.getElementById("confirmCancel");
+    function cleanup(result) {
+      okBtn.removeEventListener("click", onOk);
+      cancelBtn.removeEventListener("click", onCancel);
+      confirmDialog.close();
+      resolve(result);
+    }
+    function onOk() { cleanup(true); }
+    function onCancel() { cleanup(false); }
+    okBtn.addEventListener("click", onOk);
+    cancelBtn.addEventListener("click", onCancel);
+  });
+}
+
 // ---------- Toast ----------
 let toastTimer = null;
 function showToast(msg) {
@@ -150,9 +171,11 @@ function renderRecordings() {
   });
 }
 
-function deleteRecording(id) {
+async function deleteRecording(id) {
   const meta = getRecordings();
   const rec = meta.find(r => r.id === id);
+  const ok = await askConfirm(`Supprimer l'enregistrement "${rec ? rec.name : ""}" ? Cette action est définitive.`);
+  if (!ok) return;
   const remaining = meta.filter(r => r.id !== id);
   store.set("wr_recordings_meta", remaining);
   if (recordingBlobs[id]) {
@@ -178,7 +201,8 @@ function attachStationHandlers(ul, list) {
 
 function toggleFavorite(station) {
   let favs = getFavorites();
-  if (isFavorite(station)) {
+  const nowFav = !isFavorite(station);
+  if (!nowFav) {
     favs = favs.filter(s => stationKey(s) !== stationKey(station));
     showToast("Retiré des favoris");
   } else {
@@ -186,8 +210,16 @@ function toggleFavorite(station) {
     showToast("Ajouté aux favoris");
   }
   setFavorites(favs);
-  renderDefaultStations();
-  renderFavorites();
+
+  // Update the heart icon everywhere this station is currently shown
+  // (Stations, Recherche, Historique, Favoris), not just the list clicked.
+  const encoded = encodeURIComponent(station.url);
+  document.querySelectorAll(`.station-item[data-url="${encoded}"] .station-fav`).forEach(btn => {
+    btn.innerHTML = heartIcon(nowFav);
+    btn.classList.toggle("active", nowFav);
+  });
+
+  renderFavorites(); // list membership changed: add or remove the row itself
   updateFavButton();
 }
 
@@ -244,9 +276,28 @@ document.getElementById("btnFav").addEventListener("click", () => {
 });
 
 document.getElementById("volume").addEventListener("input", (e) => {
-  player.volume = parseFloat(e.target.value);
+  const v = parseFloat(e.target.value);
+  player.volume = v;
+  if (v > 0 && player.muted) setMuted(false);
 });
 player.volume = 0.9;
+
+// ---------- Mute ----------
+let volumeBeforeMute = 0.9;
+function setMuted(muted) {
+  player.muted = muted;
+  document.getElementById("btnMute").classList.toggle("muted", muted);
+  document.getElementById("iconVolume").style.display = muted ? "none" : "block";
+  document.getElementById("iconMuted").style.display = muted ? "block" : "none";
+}
+document.getElementById("btnMute").addEventListener("click", () => {
+  if (player.muted) {
+    setMuted(false);
+  } else {
+    volumeBeforeMute = player.volume || volumeBeforeMute;
+    setMuted(true);
+  }
+});
 
 player.addEventListener("pause", () => setPlayIcon(false));
 player.addEventListener("playing", () => {
@@ -335,7 +386,10 @@ document.getElementById("btnClearHistory").addEventListener("click", () => {
 });
 
 // ---------- Recordings: clear all ----------
-document.getElementById("btnClearRecordings").addEventListener("click", () => {
+document.getElementById("btnClearRecordings").addEventListener("click", async () => {
+  if (!getRecordings().length) return;
+  const ok = await askConfirm("Supprimer tous les enregistrements ? Cette action est définitive.");
+  if (!ok) return;
   Object.keys(recordingBlobs).forEach(id => URL.revokeObjectURL(recordingBlobs[id]));
   Object.keys(recordingBlobs).forEach(id => delete recordingBlobs[id]);
   store.set("wr_recordings_meta", []);

@@ -17,22 +17,28 @@
 html, body {
   margin: 0;
   padding: 0;
-  background: var(--bg);
+  background: #0A0908;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 body {
   padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  justify-content: center;
 }
 
 .app {
+  width: 100%;
   max-width: 480px;
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
+  box-shadow: 0 0 60px rgba(0,0,0,.5);
 }
 
 /* ---------- Dial / player ---------- */
@@ -151,7 +157,19 @@ body {
   max-width: 260px;
   margin: 0 auto;
 }
-.volume-icon { font-size: .95rem; }
+
+.btn-mute {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+.btn-mute.muted { color: var(--live); }
 
 input[type="range"] {
   flex: 1;
@@ -160,13 +178,26 @@ input[type="range"] {
 
 /* ---------- Tabs ---------- */
 
+.tabs-outer {
+  position: relative;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.tabs-outer::after {
+  content: "";
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 28px;
+  background: linear-gradient(to right, transparent, var(--bg) 75%);
+  pointer-events: none;
+}
+
 .tabs {
   display: flex;
   overflow-x: auto;
   gap: 4px;
   padding: 10px 16px;
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
   scrollbar-width: none;
 }
 .tabs::-webkit-scrollbar { display: none; }
@@ -333,7 +364,7 @@ input[type="range"] {
 
 /* ---------- Add-station dialog ---------- */
 
-dialog#addStationDialog {
+dialog#addStationDialog, dialog#confirmDialog {
   border: none;
   border-radius: var(--radius);
   background: var(--panel);
@@ -343,6 +374,10 @@ dialog#addStationDialog {
   max-width: 360px;
 }
 dialog::backdrop { background: rgba(0,0,0,.6); }
+
+.confirm-body p { margin: 0 0 16px; font-size: .95rem; line-height: 1.4; }
+
+.btn-primary-danger { background: var(--live); color: #2a0d08; }
 
 .add-form { display: flex; flex-direction: column; gap: 14px; }
 .add-form h2 { margin: 0; font-size: 1.05rem; }
