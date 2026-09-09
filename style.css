@@ -186,6 +186,7 @@ input[type="range"] {
 .tabs {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   padding: 10px 16px;
   background: var(--bg);
