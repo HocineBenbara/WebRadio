@@ -1,3 +1,184 @@
+// ---------- i18n ----------
+const I18N = {
+  fr: {
+    dialLabel: "EN LECTURE",
+    dialNoStation: "Aucune station",
+    dialChoose: "Choisissez une station pour commencer",
+    dialLive: "Lecture en direct",
+    favTitle: "Ajouter aux favoris",
+    playAria: "Lecture / Pause",
+    recordTitle: "Enregistrer",
+    muteAria: "Couper le son",
+    tabStations: "Stations",
+    tabSearch: "Recherche",
+    tabFavorites: "Favoris",
+    tabHistory: "Historique",
+    tabRecordings: "Enregistrements",
+    stationsHeading: "Stations suggérées",
+    addStationBtn: "+ Ajouter une station",
+    searchHeading: "Rechercher une radio",
+    searchPlaceholder: "Nom, pays, genre… (ex. jazz, France, rock)",
+    searchButton: "Chercher",
+    searchHint: "Recherche via l'annuaire public Radio-Browser.",
+    searchSearching: "Recherche en cours…",
+    searchNoResults: "Aucun résultat.",
+    searchResultsCount: (n) => `${n} résultat(s)`,
+    searchUnavailable: "Recherche indisponible pour le moment (hors ligne ou API inaccessible).",
+    favoritesHeading: "Favoris",
+    favoritesEmpty: "Aucun favori pour l'instant. Touchez ♡ sur une station pour l'ajouter ici.",
+    historyHeading: "Historique",
+    historyClear: "Effacer",
+    historyEmpty: "Les stations écoutées récemment apparaîtront ici.",
+    recordingsHeading: "Enregistrements",
+    recordingsClearAll: "Tout effacer",
+    recordingsHint: "L'enregistrement capture le flux en cours de lecture jusqu'à ce que vous l'arrêtiez. Le fichier est ensuite téléchargeable.",
+    recordingsEmpty: "Aucun enregistrement pour l'instant.",
+    downloadBtn: "Télécharger",
+    deleteBtn: "Supprimer",
+    addDialogTitle: "Ajouter une station",
+    addDialogNameLabel: "Nom",
+    addDialogNamePlaceholder: "Ma radio",
+    addDialogUrlLabel: "URL du flux",
+    addDialogCancel: "Annuler",
+    addDialogSubmit: "Ajouter",
+    confirmCancel: "Annuler",
+    confirmDelete: "Supprimer",
+    confirmDeleteRecording: (name) => `Supprimer l'enregistrement "${name}" ? Cette action est définitive.`,
+    confirmDeleteAllRecordings: "Supprimer tous les enregistrements ? Cette action est définitive.",
+    toastFavAdded: "Ajouté aux favoris",
+    toastFavRemoved: "Retiré des favoris",
+    toastChooseStation: "Choisissez une station",
+    toastChooseStationFirst: "Choisissez une station d'abord",
+    toastPlaybackError: "Erreur de lecture du flux",
+    toastCannotPlay: "Impossible de lire ce flux",
+    toastStationAdded: "Station ajoutée",
+    toastRecordingStarted: "Enregistrement démarré",
+    toastRecordingUnsupported: "Enregistrement non pris en charge sur ce flux/navigateur",
+    toastRecordingReady: "Enregistrement prêt à télécharger",
+    toastRecordingDeleted: (name) => `"${name}" supprimé`,
+    toastRecordingGenericDeleted: "Enregistrement supprimé",
+    toastRecordingUnavailable: "Cet enregistrement n'est plus disponible (rechargement de page).",
+    customStationTag: "Ajoutée manuellement",
+    unnamedStation: "Sans nom",
+    defaultRecordingName: "Enregistrement"
+  },
+  en: {
+    dialLabel: "NOW PLAYING",
+    dialNoStation: "No station",
+    dialChoose: "Choose a station to get started",
+    dialLive: "Live playback",
+    favTitle: "Add to favorites",
+    playAria: "Play / Pause",
+    recordTitle: "Record",
+    muteAria: "Mute",
+    tabStations: "Stations",
+    tabSearch: "Search",
+    tabFavorites: "Favorites",
+    tabHistory: "History",
+    tabRecordings: "Recordings",
+    stationsHeading: "Suggested stations",
+    addStationBtn: "+ Add a station",
+    searchHeading: "Search for a station",
+    searchPlaceholder: "Name, country, genre… (e.g. jazz, France, rock)",
+    searchButton: "Search",
+    searchHint: "Search via the public Radio-Browser directory.",
+    searchSearching: "Searching…",
+    searchNoResults: "No results.",
+    searchResultsCount: (n) => `${n} result(s)`,
+    searchUnavailable: "Search unavailable right now (offline or API unreachable).",
+    favoritesHeading: "Favorites",
+    favoritesEmpty: "No favorites yet. Tap ♡ on a station to add it here.",
+    historyHeading: "History",
+    historyClear: "Clear",
+    historyEmpty: "Recently played stations will appear here.",
+    recordingsHeading: "Recordings",
+    recordingsClearAll: "Clear all",
+    recordingsHint: "Recording captures the stream currently playing until you stop it. The file can then be downloaded.",
+    recordingsEmpty: "No recordings yet.",
+    downloadBtn: "Download",
+    deleteBtn: "Delete",
+    addDialogTitle: "Add a station",
+    addDialogNameLabel: "Name",
+    addDialogNamePlaceholder: "My station",
+    addDialogUrlLabel: "Stream URL",
+    addDialogCancel: "Cancel",
+    addDialogSubmit: "Add",
+    confirmCancel: "Cancel",
+    confirmDelete: "Delete",
+    confirmDeleteRecording: (name) => `Delete recording "${name}"? This action is permanent.`,
+    confirmDeleteAllRecordings: "Delete all recordings? This action is permanent.",
+    toastFavAdded: "Added to favorites",
+    toastFavRemoved: "Removed from favorites",
+    toastChooseStation: "Choose a station",
+    toastChooseStationFirst: "Choose a station first",
+    toastPlaybackError: "Playback error",
+    toastCannotPlay: "Unable to play this stream",
+    toastStationAdded: "Station added",
+    toastRecordingStarted: "Recording started",
+    toastRecordingUnsupported: "Recording not supported for this stream/browser",
+    toastRecordingReady: "Recording ready to download",
+    toastRecordingDeleted: (name) => `"${name}" deleted`,
+    toastRecordingGenericDeleted: "Recording deleted",
+    toastRecordingUnavailable: "This recording is no longer available (page was reloaded).",
+    customStationTag: "Added manually",
+    unnamedStation: "Unnamed",
+    defaultRecordingName: "Recording"
+  }
+};
+
+let currentLang = localStorage.getItem("wr_lang") || "fr";
+
+function t(key, ...args) {
+  const entry = (I18N[currentLang] && I18N[currentLang][key]) ?? I18N.fr[key];
+  return typeof entry === "function" ? entry(...args) : entry;
+}
+
+function stationTag(station) {
+  if (station && station.tags && typeof station.tags === "object") {
+    return station.tags[currentLang] || station.tags.fr || station.tags.en || "";
+  }
+  return (station && station.tags) || "";
+}
+
+function applyStaticTranslations() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  document.querySelectorAll("[data-i18n-title]").forEach(el => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el => {
+    el.setAttribute("aria-label", t(el.dataset.i18nAria));
+  });
+  document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === currentLang);
+  });
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem("wr_lang", lang);
+  applyStaticTranslations();
+  renderDefaultStations();
+  renderFavorites();
+  renderHistory();
+  renderRecordings();
+  updateFavButton();
+  if (currentStation) {
+    document.getElementById("stationMeta").textContent = stationTag(currentStation) || t("dialLive");
+  }
+}
+
+document.getElementById("langSwitch").addEventListener("click", (e) => {
+  const btn = e.target.closest(".lang-btn");
+  if (!btn) return;
+  setLanguage(btn.dataset.lang);
+});
+
 // ---------- Config ----------
 const RADIO_API_HOSTS = [
   "https://de1.api.radio-browser.info",
@@ -6,11 +187,11 @@ const RADIO_API_HOSTS = [
 ];
 
 const DEFAULT_STATIONS = [
-  { name: "FIP", url: "https://icecast.radiofrance.fr/fip-hifi.aac", tags: "France · Éclectique" },
-  { name: "France Info", url: "https://icecast.radiofrance.fr/franceinfo-hifi.aac", tags: "France · Actualités" },
-  { name: "Radio Swiss Jazz", url: "https://stream.srg-ssr.ch/m/rsj/mp3_128", tags: "Suisse · Jazz" },
-  { name: "SomaFM Groove Salad", url: "https://ice1.somafm.com/groovesalad-128-mp3", tags: "USA · Ambient / Downtempo" },
-  { name: "Radio Nova", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3", tags: "France · Musique éclectique" }
+  { name: "FIP", url: "https://icecast.radiofrance.fr/fip-hifi.aac", tags: { fr: "France · Éclectique", en: "France · Eclectic" } },
+  { name: "France Info", url: "https://icecast.radiofrance.fr/franceinfo-hifi.aac", tags: { fr: "France · Actualités", en: "France · News" } },
+  { name: "Radio Swiss Jazz", url: "https://stream.srg-ssr.ch/m/rsj/mp3_128", tags: { fr: "Suisse · Jazz", en: "Switzerland · Jazz" } },
+  { name: "SomaFM Groove Salad", url: "https://ice1.somafm.com/groovesalad-128-mp3", tags: { fr: "USA · Ambiance / Downtempo", en: "USA · Ambient / Downtempo" } },
+  { name: "Radio Nova", url: "https://novazz.ice.infomaniak.ch/novazz-128.mp3", tags: { fr: "France · Musique éclectique", en: "France · Eclectic music" } }
 ];
 
 // ---------- State ----------
@@ -105,15 +286,16 @@ function heartIcon(active) {
     </svg>`;
 }
 
-function stationItemHTML(station, opts = {}) {
+function stationItemHTML(station) {
   const fav = isFavorite(station);
+  const sub = stationTag(station) || station.url;
   return `
     <li class="station-item" data-url="${encodeURIComponent(station.url)}">
       <div class="station-info">
         <div class="station-title">${escapeHTML(station.name)}</div>
-        <div class="station-sub">${escapeHTML(station.tags || station.url)}</div>
+        <div class="station-sub">${escapeHTML(sub)}</div>
       </div>
-      <button class="station-fav ${fav ? "active" : ""}" data-action="fav" aria-label="Favori">${heartIcon(fav)}</button>
+      <button class="station-fav ${fav ? "active" : ""}" data-action="fav" aria-label="${t("favTitle")}">${heartIcon(fav)}</button>
     </li>
   `;
 }
@@ -151,15 +333,16 @@ function renderRecordings() {
   const recs = getRecordings();
   const ul = document.getElementById("recordingsList");
   document.getElementById("recordingsEmpty").style.display = recs.length ? "none" : "block";
+  const localeTag = currentLang === "fr" ? "fr-FR" : "en-US";
   ul.innerHTML = recs.map(r => `
     <li class="station-item" data-rec="${r.id}">
       <div class="station-info">
         <div class="station-title">${escapeHTML(r.name)}</div>
-        <div class="station-sub">${new Date(r.date).toLocaleString("fr-FR")}</div>
+        <div class="station-sub">${new Date(r.date).toLocaleString(localeTag)}</div>
       </div>
       <div class="rec-actions">
-        <button class="btn-link" data-action="download" data-rec="${r.id}">Télécharger</button>
-        <button class="btn-link btn-danger" data-action="delete" data-rec="${r.id}">Supprimer</button>
+        <button class="btn-link" data-action="download" data-rec="${r.id}">${t("downloadBtn")}</button>
+        <button class="btn-link btn-danger" data-action="delete" data-rec="${r.id}">${t("deleteBtn")}</button>
       </div>
     </li>
   `).join("");
@@ -174,7 +357,7 @@ function renderRecordings() {
 async function deleteRecording(id) {
   const meta = getRecordings();
   const rec = meta.find(r => r.id === id);
-  const ok = await askConfirm(`Supprimer l'enregistrement "${rec ? rec.name : ""}" ? Cette action est définitive.`);
+  const ok = await askConfirm(t("confirmDeleteRecording", rec ? rec.name : ""));
   if (!ok) return;
   const remaining = meta.filter(r => r.id !== id);
   store.set("wr_recordings_meta", remaining);
@@ -182,7 +365,7 @@ async function deleteRecording(id) {
     URL.revokeObjectURL(recordingBlobs[id]);
     delete recordingBlobs[id];
   }
-  showToast(rec ? `"${rec.name}" supprimé` : "Enregistrement supprimé");
+  showToast(rec ? t("toastRecordingDeleted", rec.name) : t("toastRecordingGenericDeleted"));
   renderRecordings();
 }
 
@@ -204,10 +387,10 @@ function toggleFavorite(station) {
   const nowFav = !isFavorite(station);
   if (!nowFav) {
     favs = favs.filter(s => stationKey(s) !== stationKey(station));
-    showToast("Retiré des favoris");
+    showToast(t("toastFavRemoved"));
   } else {
     favs.unshift(station);
-    showToast("Ajouté aux favoris");
+    showToast(t("toastFavAdded"));
   }
   setFavorites(favs);
 
@@ -227,9 +410,9 @@ function toggleFavorite(station) {
 function playStation(station) {
   currentStation = station;
   player.src = station.url;
-  player.play().catch(() => showToast("Impossible de lire ce flux"));
+  player.play().catch(() => showToast(t("toastCannotPlay")));
   document.getElementById("stationName").textContent = station.name;
-  document.getElementById("stationMeta").textContent = station.tags || "Lecture en direct";
+  document.getElementById("stationMeta").textContent = stationTag(station) || t("dialLive");
   document.getElementById("dialGlow").classList.add("live");
   setPlayIcon(true);
   updateFavButton();
@@ -258,7 +441,7 @@ function setPlayIcon(playing) {
 }
 
 document.getElementById("btnPlay").addEventListener("click", () => {
-  if (!currentStation) { showToast("Choisissez une station"); return; }
+  if (!currentStation) { showToast(t("toastChooseStation")); return; }
   if (player.paused) {
     player.play();
     setPlayIcon(true);
@@ -271,7 +454,7 @@ document.getElementById("btnPlay").addEventListener("click", () => {
 });
 
 document.getElementById("btnFav").addEventListener("click", () => {
-  if (!currentStation) { showToast("Choisissez une station"); return; }
+  if (!currentStation) { showToast(t("toastChooseStation")); return; }
   toggleFavorite(currentStation);
 });
 
@@ -305,7 +488,7 @@ player.addEventListener("playing", () => {
   document.getElementById("dialGlow").classList.add("live");
 });
 player.addEventListener("error", () => {
-  showToast("Erreur de lecture du flux");
+  showToast(t("toastPlaybackError"));
   document.getElementById("dialGlow").classList.remove("live");
 });
 
@@ -315,7 +498,7 @@ function updateMediaSession(station) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: station.name,
     artist: "WebRadio",
-    album: station.tags || "",
+    album: stationTag(station) || "",
   });
   navigator.mediaSession.setActionHandler("play", () => { player.play(); setPlayIcon(true); });
   navigator.mediaSession.setActionHandler("pause", () => { player.pause(); setPlayIcon(false); });
@@ -328,7 +511,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
   const status = document.getElementById("searchStatus");
   const results = document.getElementById("searchResults");
   if (!q) return;
-  status.textContent = "Recherche en cours…";
+  status.textContent = t("searchSearching");
   results.innerHTML = "";
 
   for (const host of RADIO_API_HOSTS) {
@@ -342,15 +525,15 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
       const stations = data
         .filter(s => s.url_resolved || s.url)
         .map(s => ({
-          name: s.name || "Sans nom",
+          name: s.name || t("unnamedStation"),
           url: s.url_resolved || s.url,
           tags: [s.country, s.tags].filter(Boolean).join(" · ")
         }));
       if (!stations.length) {
-        status.textContent = "Aucun résultat.";
+        status.textContent = t("searchNoResults");
         return;
       }
-      status.textContent = `${stations.length} résultat(s)`;
+      status.textContent = t("searchResultsCount", stations.length);
       results.innerHTML = stations.map(s => stationItemHTML(s)).join("");
       attachStationHandlers(results, stations);
       return;
@@ -358,7 +541,7 @@ document.getElementById("searchForm").addEventListener("submit", async (e) => {
       continue; // try next mirror
     }
   }
-  status.textContent = "Recherche indisponible pour le moment (hors ligne ou API inaccessible).";
+  status.textContent = t("searchUnavailable");
 });
 
 // ---------- Add custom station ----------
@@ -371,12 +554,12 @@ document.getElementById("addStationForm").addEventListener("submit", (e) => {
   const url = document.getElementById("addUrl").value.trim();
   if (!name || !url) return;
   const list = getCustomStations();
-  list.unshift({ name, url, tags: "Ajoutée manuellement" });
+  list.unshift({ name, url, tags: { fr: "Ajoutée manuellement", en: "Added manually" } });
   setCustomStations(list);
   dialog.close();
   document.getElementById("addStationForm").reset();
   renderDefaultStations();
-  showToast("Station ajoutée");
+  showToast(t("toastStationAdded"));
 });
 
 // ---------- History clear ----------
@@ -388,7 +571,7 @@ document.getElementById("btnClearHistory").addEventListener("click", () => {
 // ---------- Recordings: clear all ----------
 document.getElementById("btnClearRecordings").addEventListener("click", async () => {
   if (!getRecordings().length) return;
-  const ok = await askConfirm("Supprimer tous les enregistrements ? Cette action est définitive.");
+  const ok = await askConfirm(t("confirmDeleteAllRecordings"));
   if (!ok) return;
   Object.keys(recordingBlobs).forEach(id => URL.revokeObjectURL(recordingBlobs[id]));
   Object.keys(recordingBlobs).forEach(id => delete recordingBlobs[id]);
@@ -398,7 +581,7 @@ document.getElementById("btnClearRecordings").addEventListener("click", async ()
 
 // ---------- Recording ----------
 document.getElementById("btnRecord").addEventListener("click", () => {
-  if (!currentStation) { showToast("Choisissez une station d'abord"); return; }
+  if (!currentStation) { showToast(t("toastChooseStationFirst")); return; }
   if (mediaRecorder && mediaRecorder.state === "recording") {
     stopRecording();
   } else {
@@ -421,9 +604,9 @@ function startRecording() {
     mediaRecorder.start();
 
     document.getElementById("btnRecord").classList.add("recording");
-    showToast("Enregistrement démarré");
+    showToast(t("toastRecordingStarted"));
   } catch (err) {
-    showToast("Enregistrement non pris en charge sur ce flux/navigateur");
+    showToast(t("toastRecordingUnsupported"));
   }
 }
 
@@ -437,23 +620,24 @@ function saveRecording() {
   const id = "rec_" + Date.now();
   recordingBlobs[id] = URL.createObjectURL(blob);
   const meta = getRecordings();
-  meta.unshift({ id, name: currentStation ? currentStation.name : "Enregistrement", date: Date.now() });
+  meta.unshift({ id, name: currentStation ? currentStation.name : t("defaultRecordingName"), date: Date.now() });
   store.set("wr_recordings_meta", meta.slice(0, 20));
-  showToast("Enregistrement prêt à télécharger");
+  showToast(t("toastRecordingReady"));
   renderRecordings();
 }
 
 function downloadRecording(id) {
   const url = recordingBlobs[id];
-  if (!url) { showToast("Cet enregistrement n'est plus disponible (rechargement de page)."); return; }
+  if (!url) { showToast(t("toastRecordingUnavailable")); return; }
   const meta = getRecordings().find(r => r.id === id);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${(meta?.name || "enregistrement").replace(/[^a-z0-9]/gi, "_")}.webm`;
+  a.download = `${(meta?.name || "recording").replace(/[^a-z0-9]/gi, "_")}.webm`;
   a.click();
 }
 
 // ---------- Init ----------
+applyStaticTranslations();
 renderDefaultStations();
 renderFavorites();
 renderHistory();
